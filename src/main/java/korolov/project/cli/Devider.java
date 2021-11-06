@@ -2,6 +2,8 @@ package korolov.project.cli;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
+import korolov.project.business.export.ExportFactoryMethod;
+import korolov.project.business.export.IExporter;
 import korolov.project.business.find.FinderFactoryMethod;
 import korolov.project.business.find.IFinder;
 import korolov.project.dao.Repository;
@@ -86,16 +88,34 @@ public class Devider {
         repository.getListOfRecords().forEach(System.out::println);
 
         for (String task : listOfTasks) {
-            Object object;
             FinderFactoryMethod finderFactoryMethod = new FinderFactoryMethod(task,repository);
             Optional<IFinder<?>> ifinder = finderFactoryMethod.getFinder();
             if(ifinder.isPresent()){
                 ifinder.get().find();
-                //TODO export data(repeat with finder interface for export)
+                exportData();
             } else{
                 System.out.println("Unknown task: " + task);
             }
         }
 
+    }
+
+    private void exportData(){
+        //TODO exception if is not possible to create file or write to it or file is already exists
+        for (String outFormat : listOfOutFormats) {
+            ExportFactoryMethod exportFactoryMethod = new ExportFactoryMethod(outFormat);
+            Optional<IExporter> iExporter = exportFactoryMethod.getExporter();
+
+            if(iExporter.isPresent()){
+                try{
+                    iExporter.get().export();
+                }
+                catch (){
+                    //TODO
+                }
+            } else {
+                System.out.println("Unknown export format: " + outFormat);
+            }
+        }
     }
 }
