@@ -26,7 +26,6 @@ public class DayWithMaxNumberOfRecordsFinder implements IFinder<String> {
             nodes[i] = new Node();
             nodes[i].numberOfRecords = 0;
         }
-        System.out.println(repository.getListOfRecords());
         for (korolov.project.domain.Record record : repository.getListOfRecords()) {
             nodes[record.getMeasuredFrom().getDayOfYear()].localDateTime = record.getMeasuredFrom();
             (nodes[record.getMeasuredFrom().getDayOfYear()].numberOfRecords)++;
