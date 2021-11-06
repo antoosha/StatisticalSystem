@@ -5,7 +5,7 @@ public class CsvExporter implements IExporter{
     }
 
     @Override
-    public void export() {
+    public void export(Object dataToExport) {
         //TODO
     }
 }

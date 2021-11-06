@@ -91,8 +91,8 @@ public class Devider {
             FinderFactoryMethod finderFactoryMethod = new FinderFactoryMethod(task,repository);
             Optional<IFinder<?>> ifinder = finderFactoryMethod.getFinder();
             if(ifinder.isPresent()){
-                ifinder.get().find();
-                exportData();
+                Object dataToExport = ifinder.get().find();
+                exportData(dataToExport);
             } else{
                 System.out.println("Unknown task: " + task);
             }
@@ -100,18 +100,18 @@ public class Devider {
 
     }
 
-    private void exportData(){
-        //TODO exception if is not possible to create file or write to it or file is already exists
+    private void exportData(Object dataToExport){
         for (String outFormat : listOfOutFormats) {
             ExportFactoryMethod exportFactoryMethod = new ExportFactoryMethod(outFormat);
             Optional<IExporter> iExporter = exportFactoryMethod.getExporter();
 
             if(iExporter.isPresent()){
                 try{
-                    iExporter.get().export();
+                    iExporter.get().export(dataToExport);
                 }
-                catch (){
-                    //TODO
+                catch (IOException ioex){
+                    System.out.println("Is not possible to export data with format: " + outFormat);
+                    System.err.println(ioex.getMessage());
                 }
             } else {
                 System.out.println("Unknown export format: " + outFormat);
