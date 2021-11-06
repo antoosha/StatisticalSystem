@@ -9,6 +9,7 @@ import korolov.project.business.find.IFinder;
 import korolov.project.dao.Repository;
 import korolov.project.domain.Record;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -26,6 +27,7 @@ public class Devider {
     private final List<String> listOfTasks;
     private final List<String> listOfOutFormats;
     private final Repository repository;
+    private final String directoryToExport = "exportDirStatisticalSystem";
 
     {
         repository = new Repository(Collections.emptyList());
@@ -84,15 +86,20 @@ public class Devider {
         catch (IOException e) {
             e.printStackTrace();
         }
-
         repository.getListOfRecords().forEach(System.out::println);
+
+        File file = new File(directoryToExport);
+        if(!file.mkdir()){
+            System.err.println("Could not to create directory with exporting files.");
+            System.exit(1);
+        }
 
         for (String task : listOfTasks) {
             FinderFactoryMethod finderFactoryMethod = new FinderFactoryMethod(task,repository);
             Optional<IFinder<?>> ifinder = finderFactoryMethod.getFinder();
             if(ifinder.isPresent()){
                 Object dataToExport = ifinder.get().find();
-                exportData(dataToExport);
+                exportData(dataToExport, task);
             } else{
                 System.out.println("Unknown task: " + task);
             }
@@ -100,14 +107,14 @@ public class Devider {
 
     }
 
-    private void exportData(Object dataToExport){
+    private void exportData(Object dataToExport, String task){
         for (String outFormat : listOfOutFormats) {
             ExportFactoryMethod exportFactoryMethod = new ExportFactoryMethod(outFormat);
             Optional<IExporter> iExporter = exportFactoryMethod.getExporter();
 
             if(iExporter.isPresent()){
                 try{
-                    iExporter.get().export(dataToExport);
+                    iExporter.get().export(dataToExport, task, directoryToExport);
                 }
                 catch (IOException ioex){
                     System.out.println("Is not possible to export data with format: " + outFormat);
