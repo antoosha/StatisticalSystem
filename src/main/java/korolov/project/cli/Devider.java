@@ -1,8 +1,9 @@
 package korolov.project.cli;
 
-import korolov.project.business.*;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
+import korolov.project.business.find.FinderFactoryMethod;
+import korolov.project.business.find.IFinder;
 import korolov.project.dao.Repository;
 import korolov.project.domain.Record;
 
@@ -90,7 +91,7 @@ public class Devider {
             Optional<IFinder<?>> ifinder = finderFactoryMethod.getFinder();
             if(ifinder.isPresent()){
                 ifinder.get().find();
-                //export data(repeat with finder interface for export)
+                //TODO export data(repeat with finder interface for export)
             } else{
                 System.out.println("Unknown task: " + task);
             }

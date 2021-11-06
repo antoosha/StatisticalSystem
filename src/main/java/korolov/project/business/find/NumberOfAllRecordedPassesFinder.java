@@ -1,4 +1,4 @@
-package korolov.project.business;
+package korolov.project.business.find;
 
 import korolov.project.dao.Repository;
 
@@ -14,6 +14,7 @@ public class NumberOfAllRecordedPassesFinder implements IFinder<Integer> {
 
     @Override
     public Integer find() {
-        return null;
+        //TODO
+        return 0;
     }
 }
