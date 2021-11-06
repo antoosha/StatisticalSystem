@@ -1,6 +1,7 @@
 package korolov.project.business.find;
 
 import korolov.project.dao.Repository;
+
 import java.util.Optional;
 
 public class FinderFactoryMethod {
@@ -12,7 +13,7 @@ public class FinderFactoryMethod {
         this.repository = repository;
     }
 
-    public Optional<IFinder<?>> getFinder(){
+    public Optional<IFinder<?>> getFinder() {
         IFinder<?> result;
         switch (task) {
             case "DM" -> {

@@ -69,7 +69,7 @@ public class Record {
         return "Record{" +
                 "locationId='" + locationId + '\'' +
                 ", directionId='" + directionId + '\'' +
-                ", measuredFrom='" + measuredFrom.toString()+  '\'' +
+                ", measuredFrom='" + measuredFrom.toString() + '\'' +
                 ", measuredTo='" + measuredTo.toString() + '\'' +
                 ", numberOfRecords=" + numberOfRecords +
                 '}';

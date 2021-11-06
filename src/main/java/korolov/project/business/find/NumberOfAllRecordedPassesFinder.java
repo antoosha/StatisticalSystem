@@ -14,7 +14,10 @@ public class NumberOfAllRecordedPassesFinder implements IFinder<Integer> {
 
     @Override
     public Integer find() {
-        //TODO
-        return 0;
+        int result = 0;
+        for (korolov.project.domain.Record record : repository.getListOfRecords()) {
+            result += record.getNumberOfRecords();
+        }
+        return result;
     }
 }

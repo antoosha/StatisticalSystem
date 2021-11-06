@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -64,6 +65,7 @@ public class Devider {
                 DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'.'SSS'Z'");
                 String[] nextLine;
                 reader.skip(1);
+                List<Record> records = new ArrayList<>();
                 while ((nextLine = reader.readNext()) != null) {
                     Record record = new Record(
                             nextLine[0],
@@ -71,52 +73,48 @@ public class Devider {
                             LocalDateTime.parse(nextLine[2], fmt),
                             LocalDateTime.parse(nextLine[3], fmt),
                             nextLine[4].isEmpty() ? 0 : Integer.parseInt(nextLine[4]));
-                    System.out.println(record);
+                    records.add(record);
                 }
+                repository.setListOfRecords(records);
             }
-        }
-        catch (CsvValidationException e) {
+        } catch (CsvValidationException e) {
             System.err.println("Non valid format of input data.");
             System.exit(1);
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             System.err.println("File does not found.");
             System.exit(1);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        repository.getListOfRecords().forEach(System.out::println);
 
         File file = new File(directoryToExport);
-        if(!file.mkdir()){
+        if (!file.mkdir()) {
             System.err.println("Could not to create directory with exporting files.");
             System.exit(1);
         }
 
         for (String task : listOfTasks) {
-            FinderFactoryMethod finderFactoryMethod = new FinderFactoryMethod(task,repository);
+            FinderFactoryMethod finderFactoryMethod = new FinderFactoryMethod(task, repository);
             Optional<IFinder<?>> ifinder = finderFactoryMethod.getFinder();
-            if(ifinder.isPresent()){
+            if (ifinder.isPresent()) {
                 Object dataToExport = ifinder.get().find();
                 exportData(dataToExport, task);
-            } else{
+            } else {
                 System.out.println("Unknown task: " + task);
             }
         }
 
     }
 
-    private void exportData(Object dataToExport, String task){
+    private void exportData(Object dataToExport, String task) {
         for (String outFormat : listOfOutFormats) {
             ExportFactoryMethod exportFactoryMethod = new ExportFactoryMethod(outFormat);
             Optional<IExporter> iExporter = exportFactoryMethod.getExporter();
 
-            if(iExporter.isPresent()){
-                try{
+            if (iExporter.isPresent()) {
+                try {
                     iExporter.get().export(dataToExport, task, directoryToExport);
-                }
-                catch (IOException ioex){
+                } catch (IOException ioex) {
                     System.out.println("Is not possible to export data with format: " + outFormat);
                     System.err.println(ioex.getMessage());
                 }
