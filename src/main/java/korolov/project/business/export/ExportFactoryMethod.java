@@ -19,9 +19,6 @@ public class ExportFactoryMethod {
             case "TXT" -> {
                 result = new TextExporter();
             }
-            case "CSV" -> {
-                result = new CsvExporter();
-            }
             default -> {
                 result = null;
             }

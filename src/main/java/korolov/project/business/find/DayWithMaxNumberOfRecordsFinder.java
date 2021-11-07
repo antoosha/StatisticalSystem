@@ -7,15 +7,28 @@ import java.time.LocalDateTime;
 /**
  * (DM) Service, which finds day with maximum number of records per day.
  */
-public class DayWithMaxNumberOfRecordsFinder implements IFinder<String> {
+public class DayWithMaxNumberOfRecordsFinder implements IFinder<DayWithMaxNumberOfRecordsFinder.ExportClass> {
     private final Repository repository;
 
     public DayWithMaxNumberOfRecordsFinder(Repository repository) {
         this.repository = repository;
     }
 
+    protected class ExportClass {
+        protected String date;
+
+        public ExportClass(String date) {
+            this.date = date;
+        }
+
+        @Override
+        public String toString() {
+            return "date = " + date;
+        }
+    }
+
     @Override
-    public String find() {
+    public ExportClass find() {
         class Node {
             protected LocalDateTime localDateTime;
             protected int numberOfRecords;
@@ -38,6 +51,8 @@ public class DayWithMaxNumberOfRecordsFinder implements IFinder<String> {
                 resultLocalDateTime = node.localDateTime;
             }
         }
-        return resultLocalDateTime.getYear() + "-" + resultLocalDateTime.getMonth().getValue() + "-" + resultLocalDateTime.getDayOfMonth();
+        return new ExportClass(resultLocalDateTime.getYear() + "-"
+                + resultLocalDateTime.getMonth().getValue() + "-"
+                + resultLocalDateTime.getDayOfMonth());
     }
 }

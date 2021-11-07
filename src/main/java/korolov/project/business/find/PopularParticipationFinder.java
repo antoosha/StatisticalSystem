@@ -8,17 +8,29 @@ import java.util.Map;
 /**
  * (MP) Service, which finds most frequently driven participation.
  */
-public class PopularParticipationFinder implements IFinder<String> {
+public class PopularParticipationFinder implements IFinder<PopularParticipationFinder.ExportClass> {
     private final Repository repository;
 
     public PopularParticipationFinder(Repository repository) {
         this.repository = repository;
     }
 
+    protected class ExportClass {
+        protected String popularDirection;
+
+        public ExportClass(String direction) {
+            this.popularDirection = direction;
+        }
+
+        @Override
+        public String toString() {
+            return "popularDirection = " + popularDirection;
+        }
+    }
+
     @Override
-    public String find() {
+    public ExportClass find() {
         Map<String, Integer> mapOfDirections = new HashMap<>();
-        System.out.println(repository.getListOfRecords());
         for (korolov.project.domain.Record record : repository.getListOfRecords()) {
             if (mapOfDirections.containsKey(record.getDirectionId())) {
                 int replace = mapOfDirections.get(record.getDirectionId());
@@ -28,15 +40,14 @@ public class PopularParticipationFinder implements IFinder<String> {
         }
 
         int max = 0;
-        String direction = repository.getListOfRecords().get(0).getDirectionId();
-        System.out.println(mapOfDirections);
+        String popularDirection = repository.getListOfRecords().get(0).getDirectionId();
         for (Map.Entry<String, Integer> entry : mapOfDirections.entrySet()) {
             if (entry.getValue() > max) {
                 max = entry.getValue();
-                direction = entry.getKey();
+                popularDirection = entry.getKey();
             }
         }
 
-        return "The most popular direction is: " + direction;
+        return new ExportClass(popularDirection);
     }
 }

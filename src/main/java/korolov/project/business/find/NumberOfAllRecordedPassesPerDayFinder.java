@@ -10,21 +10,37 @@ import java.util.List;
 /**
  * (TD) Service, which finds number of all cyclists passes throw all records per each day.
  */
-public class NumberOfAllRecordedPassesPerDayFinder implements IFinder<List<String>> {
+public class NumberOfAllRecordedPassesPerDayFinder implements IFinder<List<NumberOfAllRecordedPassesPerDayFinder.ExportClass>> {
     private final Repository repository;
 
     public NumberOfAllRecordedPassesPerDayFinder(Repository repository) {
         this.repository = repository;
     }
 
+    protected class ExportClass {
+        protected String date;
+        protected int numberOfRecords;
+
+        public ExportClass(String date, int numberOfRecords) {
+            this.date = date;
+            this.numberOfRecords = numberOfRecords;
+        }
+
+        @Override
+        public String toString() {
+            return "{date='" + date + '\'' +
+                    ", numberOfRecords = " + numberOfRecords + "}";
+        }
+    }
+
     @Override
-    public List<String> find() {
+    public List<ExportClass> find() {
         class Node {
             protected LocalDateTime localDateTime;
             protected int numberOfRecords;
             boolean is = false;
         }
-        List<String> resultList = new ArrayList<>();
+        List<ExportClass> resultList = new ArrayList<>();
         ArrayList<Node> nodes = new ArrayList<>();
         for (int i = 0; i < 367; i++) {
             nodes.add(new Node());
@@ -44,8 +60,11 @@ public class NumberOfAllRecordedPassesPerDayFinder implements IFinder<List<Strin
 
         for (Node node : nodes) {
             if (node.is) {
-                resultList.add(node.localDateTime + " Number of passes: " + node.numberOfRecords + "\n");
 
+                resultList.add(new ExportClass(node.localDateTime.getYear() + "-"
+                        + node.localDateTime.getMonth().getValue() + "-"
+                        + node.localDateTime.getDayOfMonth()
+                        , node.numberOfRecords));
             }
         }
 
