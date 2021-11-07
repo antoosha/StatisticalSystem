@@ -4,13 +4,8 @@ import java.util.Locale;
 import java.util.Optional;
 
 public class ExportFactoryMethod {
-    private final String format;
 
-    public ExportFactoryMethod(String format) {
-        this.format = format;
-    }
-
-    public Optional<IExporter> getExporter() {
+    public static Optional<IExporter> getExporter(String format) {
         IExporter result;
         switch (format.toUpperCase(Locale.ROOT)) {
             case "JSON" -> {

@@ -2,12 +2,15 @@ package korolov.project.business.find;
 
 import korolov.project.dao.Repository;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * (DM) Service, which finds day with maximum number of records per day.
  */
-public class DayWithMaxNumberOfRecordsFinder implements IFinder<DayWithMaxNumberOfRecordsFinder.ExportClass> {
+public class DayWithMaxNumberOfRecordsFinder implements IFinder<List<DayWithMaxNumberOfRecordsFinder.ExportClass>> {
     private final Repository repository;
 
     public DayWithMaxNumberOfRecordsFinder(Repository repository) {
@@ -16,43 +19,47 @@ public class DayWithMaxNumberOfRecordsFinder implements IFinder<DayWithMaxNumber
 
     protected class ExportClass {
         protected String date;
+        protected int numberOfPasses;
 
-        public ExportClass(String date) {
+        public ExportClass(String date, int numberOfPasses) {
             this.date = date;
+            this.numberOfPasses = numberOfPasses;
         }
 
         @Override
         public String toString() {
-            return "date = " + date;
+            return "date = '" + date + '\'' +
+                    ", numberOfPasses = " + numberOfPasses;
         }
     }
 
     @Override
-    public ExportClass find() {
-        class Node {
-            protected LocalDateTime localDateTime;
-            protected int numberOfRecords;
+    public List<ExportClass> find() {
+        Map<String, Integer> mp = new HashMap<>();
+
+        for (korolov.project.domain.Record record : repository.getListOfRecords()) {
+            mp.put(record.getMeasuredFrom().toLocalDate().toString(),
+                    mp.get(record.getMeasuredFrom().toLocalDate().toString()) == null ? 1 : mp.get(record.getMeasuredFrom().toLocalDate().toString()) + 1);
         }
 
-        Node[] nodes = new Node[367];
-        for (int i = 0; i < 367; i++) {
-            nodes[i] = new Node();
-            nodes[i].numberOfRecords = 0;
-        }
-        for (korolov.project.domain.Record record : repository.getListOfRecords()) {
-            nodes[record.getMeasuredFrom().getDayOfYear()].localDateTime = record.getMeasuredFrom();
-            (nodes[record.getMeasuredFrom().getDayOfYear()].numberOfRecords)++;
-        }
         int max = 0;
-        LocalDateTime resultLocalDateTime = repository.getListOfRecords().get(0).getMeasuredFrom();
-        for (Node node : nodes) {
-            if (node.numberOfRecords > max) {
-                max = node.numberOfRecords;
-                resultLocalDateTime = node.localDateTime;
+        for (Map.Entry<String, Integer> entry : mp.entrySet()) {
+            if (entry.getValue() > max) {
+                max = entry.getValue();
             }
         }
-        return new ExportClass(resultLocalDateTime.getYear() + "-"
-                + resultLocalDateTime.getMonth().getValue() + "-"
-                + resultLocalDateTime.getDayOfMonth());
+
+        List<ExportClass> resultListOfMaxDayRecords = new ArrayList<>();
+
+        if (max != 0) {
+            for (Map.Entry<String, Integer> entry : mp.entrySet()) {
+                if (entry.getValue() == max) {
+                    resultListOfMaxDayRecords.add(new ExportClass(entry.getKey(), max));
+                }
+            }
+            resultListOfMaxDayRecords.sort((o1, o2) -> o1.date.compareTo(o2.date));
+        }
+
+        return resultListOfMaxDayRecords;
     }
 }

@@ -2,10 +2,10 @@ package korolov.project.business.find;
 
 import korolov.project.dao.Repository;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * (TD) Service, which finds number of all cyclists passes throw all records per each day.
@@ -35,38 +35,23 @@ public class NumberOfAllRecordedPassesPerDayFinder implements IFinder<List<Numbe
 
     @Override
     public List<ExportClass> find() {
-        class Node {
-            protected LocalDateTime localDateTime;
-            protected int numberOfRecords;
-            boolean is = false;
-        }
-        List<ExportClass> resultList = new ArrayList<>();
-        ArrayList<Node> nodes = new ArrayList<>();
-        for (int i = 0; i < 367; i++) {
-            nodes.add(new Node());
-            nodes.get(i).numberOfRecords = 0;
-        }
+        Map<String, Integer> mp = new HashMap<>();
+
         for (korolov.project.domain.Record record : repository.getListOfRecords()) {
-            nodes.get(record.getMeasuredFrom().getDayOfYear()).localDateTime = record.getMeasuredFrom();
-            (nodes.get(record.getMeasuredFrom().getDayOfYear()).numberOfRecords) += record.getNumberOfRecords();
-            nodes.get(record.getMeasuredFrom().getDayOfYear()).is = true;
+            mp.put(record.getMeasuredFrom().toLocalDate().toString(),
+                    mp.get(record.getMeasuredFrom().toLocalDate().toString()) == null
+                            ?
+                            record.getNumberOfRecords()
+                            :
+                            mp.get(record.getMeasuredFrom().toLocalDate().toString()) + record.getNumberOfRecords());
         }
 
-        nodes.sort(new Comparator<Node>() {
-            public int compare(Node o1, Node o2) {
-                return Integer.compare(o1.numberOfRecords, o2.numberOfRecords);
-            }
-        });
 
-        for (Node node : nodes) {
-            if (node.is) {
-
-                resultList.add(new ExportClass(node.localDateTime.getYear() + "-"
-                        + node.localDateTime.getMonth().getValue() + "-"
-                        + node.localDateTime.getDayOfMonth()
-                        , node.numberOfRecords));
-            }
+        List<ExportClass> resultList = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : mp.entrySet()) {
+            resultList.add(new ExportClass(entry.getKey(), entry.getValue()));
         }
+        if (!resultList.isEmpty()) resultList.sort((o1, o2) -> o1.date.compareTo(o2.date));
 
         return resultList;
     }

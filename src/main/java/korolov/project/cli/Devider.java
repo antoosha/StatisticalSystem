@@ -27,12 +27,8 @@ public class Devider {
     private final String nameOfInFile;
     private final List<String> listOfTasks;
     private final List<String> listOfOutFormats;
-    private final Repository repository;
+    private final Repository repository = new Repository(Collections.emptyList());
     private final String directoryToExport = "exportDirStatisticalSystem";
-
-    {
-        repository = new Repository(Collections.emptyList());
-    }
 
     public Devider(String nameOfInFile, List<String> listOfTasks, List<String> listOfOutFormats) {
         this.nameOfInFile = nameOfInFile;
@@ -94,8 +90,7 @@ public class Devider {
         }
 
         for (String task : listOfTasks) {
-            FinderFactoryMethod finderFactoryMethod = new FinderFactoryMethod(task, repository);
-            Optional<IFinder<?>> ifinder = finderFactoryMethod.getFinder();
+            Optional<IFinder<?>> ifinder = FinderFactoryMethod.getFinder(task, repository);
             if (ifinder.isPresent()) {
                 Object dataToExport = ifinder.get().find();
                 exportData(dataToExport, task);
@@ -108,8 +103,7 @@ public class Devider {
 
     private void exportData(Object dataToExport, String task) {
         for (String outFormat : listOfOutFormats) {
-            ExportFactoryMethod exportFactoryMethod = new ExportFactoryMethod(outFormat);
-            Optional<IExporter> iExporter = exportFactoryMethod.getExporter();
+            Optional<IExporter> iExporter = ExportFactoryMethod.getExporter(outFormat);
 
             if (iExporter.isPresent()) {
                 try {

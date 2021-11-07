@@ -44,26 +44,6 @@ public class Record {
         return numberOfRecords;
     }
 
-    public void setLocationId(String locationId) {
-        this.locationId = locationId;
-    }
-
-    public void setDirectionId(String directionId) {
-        this.directionId = directionId;
-    }
-
-    public void setMeasuredFrom(LocalDateTime measuredFrom) {
-        this.measuredFrom = measuredFrom;
-    }
-
-    public void setMeasuredTo(LocalDateTime measuredTo) {
-        this.measuredTo = measuredTo;
-    }
-
-    public void setNumberOfRecords(int numberOfRecords) {
-        this.numberOfRecords = numberOfRecords;
-    }
-
     @Override
     public String toString() {
         return "Record{" +

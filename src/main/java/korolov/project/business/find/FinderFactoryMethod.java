@@ -5,15 +5,8 @@ import korolov.project.dao.Repository;
 import java.util.Optional;
 
 public class FinderFactoryMethod {
-    private final String task;
-    private final Repository repository;
 
-    public FinderFactoryMethod(String task, Repository repository) {
-        this.task = task;
-        this.repository = repository;
-    }
-
-    public Optional<IFinder<?>> getFinder() {
+    public static Optional<IFinder<?>> getFinder(String task, Repository repository) {
         IFinder<?> result;
         switch (task) {
             case "DM" -> {
