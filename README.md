@@ -21,5 +21,7 @@ Gets 3 arguments:
 | camea-BC_ST-RABA  | camea-ST-BA   | 2019-12-31T23:00:00.000Z | 2019-12-31T23:05:00.000Z |       0       |
 
 locations_id,directions_id,measured_from,measured_to,value
+
 camea-BC_ST-RABA,camea-ST-BA,2019-12-31T23:00:00.000Z,2019-12-31T23:05:00.000Z,0
+
 camea-BC_VF-ARUE,camea-BC_VF-AR,2020-01-25T06:45:00.000Z,2020-01-25T06:50:00.000Z,1
