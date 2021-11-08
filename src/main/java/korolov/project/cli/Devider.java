@@ -10,6 +10,7 @@ import korolov.project.dao.Repository;
 import korolov.project.domain.Record;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -38,7 +39,7 @@ public class Devider {
      * TD - the total number of cyclists recorded for each day;
      */
     public void processRequests() {
-        try (FileReader fileReader = new FileReader(nameOfInFile)) {
+        try (FileReader fileReader = new FileReader(Path.of(nameOfInFile).toAbsolutePath().toString())) {
             try (CSVReader reader = new CSVReader(fileReader)) {
                 DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'.'SSS'Z'");
                 String[] nextLine;
