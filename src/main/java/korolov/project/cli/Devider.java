@@ -23,7 +23,7 @@ public class Devider {
     private final List<String> listOfTasks;
     private final List<String> listOfOutFormats;
     private final Repository repository = new Repository(Collections.emptyList());
-    private final String directoryToExport = "exportDirStatisticalSystem";
+    private static final String directoryToExport = "exportDirStatisticalSystem";
 
     public Devider(String nameOfInFile, List<String> listOfTasks, List<String> listOfOutFormats) {
         this.nameOfInFile = nameOfInFile;
